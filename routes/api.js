@@ -3,7 +3,7 @@ const Workout = require("../models/workout");
 
 router.get("/workouts", (req, res) => {
     Workout.find({})
-    .then((dbWorkout) => {
+    .then(dbWorkout => {
       res.json(dbWorkout);
     })
     .catch((err) => {
@@ -11,22 +11,33 @@ router.get("/workouts", (req, res) => {
     });
 });
 
+router.get("workouts/range", (req, res) => {
+  Workout.find({}).limit(10)
+    .then(dbWorkouts => {
+      res.json(dbWorkouts);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
 
-router.post("/workouts", (req, res) => {
+router.post("/workouts", ({ body }, res) => {
+  console.log('POST /workouts');
   Workout.create({})
-    .then((dbWorkout) => {
+    .then(dbWorkout => {
       res.json(dbWorkout);
     })
     .catch((err) => {
       res.status(400).json(err);
     });
+    console.log(body);
 });
 
 // getting workouts by ID
 router.put("/workouts/:id", ({ body, params }, res) => {
   Workout.findByIdAndUpdate(params.id, 
     {
-      $push: { exercises: body}
+      $push: { exercises: body }
     })
     .then((newWorkout) => {
       res.json(newWorkout);
@@ -41,7 +52,7 @@ const aggregate = Workout.aggregate([
   { $workout: { $sum: "$exercise.duration" } },
 ]);
 
-router.delete("/workouts", (req, res) => {
+router.delete("/workouts", ({ body }, res) => {
   Workout.findByIdAndDelete(body.id)
     .then(() => {
       return res.json(true);
