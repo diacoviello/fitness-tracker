@@ -12,7 +12,9 @@ app.use(express.static(path.join(__dirname, "public")));
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
   useNewUrlParser: true,
-  useFindAndModify: false
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
 });
 
 const apiRoutes = require('./routes/api');
